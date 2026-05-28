@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MoonLoader SAMP — Script Hub</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <canvas id="particles"></canvas>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🌙</span>
+        <div class="logo-text">
+          <span class="logo-main">MOONLOADER</span>
+          <span class="logo-sub">SAMP Script Hub</span>
+        </div>
+      </div>
+      <button class="admin-btn" id="adminBtn" title="Admin Login">⚙ ADMIN</button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">SAMP<br/><span class="accent">Script</span><br/>Collection</h1>
+      <p class="hero-desc">Download script moonloader terbaik untuk SA-MP. Gratis. Langsung pakai.</p>
+      <div class="hero-stats">
+        <div class="stat"><span id="totalFiles">0</span><label>Scripts</label></div>
+        <div class="stat"><span id="totalDownloads">0</span><label>Total Downloads</label></div>
+      </div>
+    </div>
+    <div class="hero-deco">
+      <div class="deco-ring r1"></div>
+      <div class="deco-ring r2"></div>
+      <div class="deco-ring r3"></div>
+    </div>
+  </section>
+
+  <!-- SEARCH -->
+  <section class="search-section">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Cari script..." autocomplete="off"/>
+      <div class="filter-wrap">
+        <select id="filterCat">
+          <option value="">Semua Kategori</option>
+          <option value="cheat">Cheat</option>
+          <option value="utility">Utility</option>
+          <option value="visual">Visual</option>
+          <option value="gameplay">Gameplay</option>
+          <option value="misc">Misc</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- FILE GRID -->
+  <main class="main-grid">
+    <div class="grid-header">
+      <h2>Script Library</h2>
+      <span id="fileCount" class="count-badge">0 file</span>
+    </div>
+    <div class="loading-state" id="loadingState">
+      <div class="spinner"></div>
+      <p>Memuat script...</p>
+    </div>
+    <div class="file-grid" id="fileGrid"></div>
+    <div class="empty-state" id="emptyState" style="display:none">
+      <div class="empty-icon">📂</div>
+      <p>Belum ada script tersedia.</p>
+      <small>Tunggu admin upload file baru!</small>
+    </div>
+  </main>
+
+  <!-- ADMIN MODAL -->
+  <div class="modal-overlay" id="adminModal">
+    <div class="modal">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div class="modal-body" id="modalBody">
+
+        <!-- LOGIN FORM -->
+        <div id="loginForm">
+          <h2 class="modal-title">🔐 Admin Login</h2>
+          <p class="modal-sub">Akses khusus owner</p>
+          <div class="field-group">
+            <label>Password</label>
+            <input type="password" id="passwordInput" placeholder="Masukkan password..." />
+          </div>
+          <div class="error-msg" id="loginError"></div>
+          <button class="btn-primary" id="loginBtn">MASUK</button>
+        </div>
+
+        <!-- ADMIN PANEL -->
+        <div id="adminPanel" style="display:none">
+          <h2 class="modal-title">⚙ Admin Panel</h2>
+          <p class="modal-sub">Upload script baru ke library</p>
+
+          <div class="upload-zone" id="dropZone">
+            <div class="upload-icon">📤</div>
+            <p>Drag & drop file kesini</p>
+            <small>atau</small>
+            <label class="btn-secondary" for="fileInput">PILIH FILE</label>
+            <input type="file" id="fileInput" multiple accept=".lua,.cs,.txt,.zip,.rar,.asi,.dll" style="display:none"/>
+          </div>
+
+          <div class="upload-queue" id="uploadQueue"></div>
+
+          <div class="field-group">
+            <label>Nama Script</label>
+            <input type="text" id="scriptName" placeholder="Nama script..." />
+          </div>
+          <div class="field-group">
+            <label>Deskripsi</label>
+            <textarea id="scriptDesc" placeholder="Deskripsi singkat script..." rows="3"></textarea>
+          </div>
+          <div class="field-group">
+            <label>Kategori</label>
+            <select id="scriptCat">
+              <option value="misc">Misc</option>
+              <option value="cheat">Cheat</option>
+              <option value="utility">Utility</option>
+              <option value="visual">Visual</option>
+              <option value="gameplay">Gameplay</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Versi</label>
+            <input type="text" id="scriptVersion" placeholder="v1.0" />
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-primary" id="uploadBtn">⬆ UPLOAD SCRIPT</button>
+            <button class="btn-danger" id="logoutBtn">LOGOUT</button>
+          </div>
+
+          <hr class="divider"/>
+          <h3 class="section-label">Kelola Script</h3>
+          <div class="manage-list" id="manageList"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- PREVIEW MODAL -->
+  <div class="modal-overlay" id="previewModal">
+    <div class="modal modal-preview">
+      <button class="modal-close" id="previewClose">✕</button>
+      <div class="preview-header">
+        <span class="preview-icon" id="previewIcon">📄</span>
+        <div>
+          <h2 id="previewName"></h2>
+          <span class="preview-cat" id="previewCat"></span>
+        </div>
+      </div>
+      <p class="preview-desc" id="previewDesc"></p>
+      <div class="preview-meta">
+        <span>📅 <span id="previewDate"></span></span>
+        <span>📦 <span id="previewSize"></span></span>
+        <span>🏷 v<span id="previewVer"></span></span>
+      </div>
+      <button class="btn-primary btn-download" id="previewDownload">⬇ DOWNLOAD SEKARANG</button>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>🌙 MoonLoader Script Hub — SA-MP</p>
+    <small>Script diupload langsung oleh owner</small>
+  </footer>
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js"></script>
+</body>
+</html>
